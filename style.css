@@ -1,0 +1,212 @@
+@import url("https://fonts.googleapis.com/css2?family=Lustria");
+:root {
+  font-size: clamp(13px, 4vw, 30px);
+  font-family: serif;
+  font-family: "Lustria", serif;
+  --bgc: #f1ede8;
+  --tc: #2b2b2b;
+  color: var(--tc);
+  background: var(--bgc);
+  padding-bottom: 2em;
+}
+
+body::before {
+  content: "";
+  background-image: url(https://assets.codepen.io/102565/paper-512x512.jpg);
+  position: fixed;
+  inset: 0;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.head,
+.foot {
+  max-width: 40rem;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.foot {
+  text-align: center;
+}
+
+.title {
+  font-size: 1.6rem;
+  max-width: 14rem;
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  margin: 1em 0 0 0;
+}
+.title--sub {
+  font-size: 0.7em;
+}
+
+.lead {
+  font-size: 0.47rem;
+  max-width: 22rem;
+  line-height: 1.6;
+  margin: 1rem 0 0 auto;
+  -moz-column-count: 2;
+       column-count: 2;
+  -moz-column-gap: 2em;
+       column-gap: 2em;
+}
+@media (max-width: 50em) {
+  .lead {
+    max-width: 100%;
+  }
+}
+@media (max-width: 35em) {
+  .lead {
+    -moz-column-count: 1;
+         column-count: 1;
+    -moz-column-gap: 0;
+         column-gap: 0;
+    font-size: 1rem;
+  }
+}
+
+.menu {
+  list-style: none;
+  padding: 0 1rem;
+  margin: 2rem 0 0;
+  display: flex;
+}
+
+button {
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  font-size: 0.47rem;
+}
+button[aria-checked] {
+  text-decoration: underline;
+}
+button span {
+  pointer-events: none;
+}
+
+.wrap {
+  padding: 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 1rem;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.wrap.is-stack {
+  display: block;
+  max-width: 20rem;
+  margin-top: 3rem;
+}
+.wrap.is-stack .plate {
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+}
+.wrap.is-stack .plate:nth-child(2n) {
+  flex-direction: column-reverse;
+}
+.wrap.is-stack .plate__color {
+  height: calc(3rem + var(--rnd) * 7rem);
+  transform: scale(1) scaleX(calc(.95 + var(--rnd) * .05)) rotate(calc((-.5 + var(--rnd2)) * -4deg)) translateX(calc((-.5 + var(--rnd2)) * 15%)) translateY(calc((-.5 + var(--rnd)) * 50%));
+}
+.wrap.is-stack .plate__color:hover {
+  z-index: 1;
+}
+
+.plate {
+  gap: 1px;
+  position: relative;
+  padding: 2rem;
+  /*background: beige;
+  background: var(--bgc);*/
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.plate__color {
+  flex: 1 1 auto;
+  height: calc(0.1rem + var(--rnd) * 1rem);
+  box-shadow: 0 0 0 1px var(--bgc);
+  transform: scale(1) scaleX(calc(.9 + var(--rnd) * .1)) skewX(calc((-.5 + var(--rnd)) * 5deg)) rotate(calc((-.5 + var(--rnd2)) * -10deg)) translateX(calc((-.5 + var(--rnd2)) * 25%)) translateY(calc((-.5 + var(--rnd)) * 100%));
+  margin-top: 1px;
+  transition: 300ms height, 400ms transform;
+  will-change: height, transform;
+}
+.plate__color:hover {
+  height: 4rem;
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.wrap.is-tabbed .plate {
+  padding: 1rem;
+}
+.wrap.is-tabbed .plate__color {
+  height: calc(0.75rem + var(--rnd) * 0.25rem);
+  box-shadow: 0 0 0 1px var(--bgc);
+  transform: scale(1) scaleX(calc(.9 + var(--rnd) * .1)) rotate(calc((-.5 + var(--rnd2)) * -2deg)) translateX(calc((-.5 + var(--rnd2)) * 5%));
+}
+
+.wrap.is-stack.is-tabbed .plate__color {
+  height: calc(3rem + var(--rnd) * 7rem);
+}
+
+.plate__title {
+  position: absolute;
+  z-index: 1;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 3vw;
+  padding: 0.5em;
+  color: var(--bgc);
+  pointer-events: none;
+  letter-spacing: -0.05em;
+}
+
+.plate:hover .plate__title {
+  opacity: 0;
+}
+
+.color {
+  position: relative;
+  width: 100%;
+  background: var(--cd);
+  overflow: hidden;
+}
+.color img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.color b {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  font-size: 0.4em;
+  line-height: 1.1;
+  padding: 1em;
+  bottom: 0;
+  opacity: 0;
+  transform: translateY(-3em);
+  color: var(--cc);
+}
+.color:hover b {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 450ms opacity linear 100ms, 400ms transform cubic-bezier(0.3, 0.7, 0, 1) 100ms;
+}
+
+.color:hover {
+  height: 4rem;
+}
