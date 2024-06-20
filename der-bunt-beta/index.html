@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Der Bunt (Beta)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="palette" class="palette" v-bind:style="{'background-color': bgcolor, '--c-background': bgcolor, '--c-background-contrast': bgcolorcontrast}" v-bind:class="{'palette---visible-settings': settingsVisible}">
+  <hhead v-bind:color="bgcolor" v-bind:colors="currentColors"></hhead>
+  <div class="settings-wrap">
+    <button class="settings-toggler" v-on:click="toggleSettings">
+      <span class="settings-toggler__label">
+        customize
+        <svg viewBox="0 0 24 24" class="dotsnav" xmlns="http://www.w3.org/2000/svg">
+          <g class="dots dots--bottom" transform="translate(12 12) rotate(0) translate(-12 -12)">
+            <circle cx="12" cy="6" r="1.5"/>
+            <circle cx="12" cy="12" r="1.5"/>
+            <circle cx="12" cy="18" r="1.5"/>  
+          </g>
+          <g class="dots dots--top" transform="translate(12 12) rotate(0) translate(-12 -12)">
+            <circle cx="12" cy="6" r="1.5"/>
+            <circle cx="12" cy="18" r="1.5"/>  
+          </g>
+        </svg>
+      </span>
+    </button>
+    <div class="settings">
+      <label class="setting">
+      <h3 class="setting__label">Method</h3>
+      <div class="select-wrap">
+        <vue-multiselect :max-height="1200" :value="currentSpace" @select="selectCurrentSpace" v-bind:selected="name === currentSpace" :options="names" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Pick a space">
+          <template slot="option" slot-scope="{ option }">
+            <strong class="option__title">{{ option }}</strong>
+            <span  class="option__preview" v-bind:style="{'background': 'linear-gradient(to left,' + colorsBySpace(option).join(',') + ')' }"></span>
+            <ol>
+            </ol>
+          </template>
+        </vue-multiselect>
+        <!--select @change="selectCurrentSpace">
+          <option v-for="name in names" @value="name" v-bind:selected="name === currentSpace">{{name}}</option>
+        </select-->
+      </div>
+    </label>
+      <div>
+      <setting label="Colors" v-bind:value="colorCount">
+        <input type="range" v-bind:min="minColorCount" v-bind:max="maxColorCount" v-model="colorCount" step="1">
+      </setting>
+    </div>
+      <div>
+      <setting multifield="true" label="Background Color">
+        <div class="button-row">
+          <button class="button button--color" v-on:click="bgcolor = '#212121'"><i style="background: #212121"></i><strong>Black</strong></button><button class="button button--color" v-on:click="bgcolor = '#5e5e5e'"><i style="background: #5e5e5e"></i><strong>Grey</strong></button><button class="button button--color" v-on:click="bgcolor = '#fffcec'"><i style="background: #fffcec"></i><strong>Ivory</strong></button><button class="button button--color" v-on:click="bgcolor = '#fcfcfc'"><i style="background: #fcfcfc"></i><strong>White</strong></button>
+          <input type="color" v-model="bgcolor" />
+        </div>
+      </setting>
+        
+    </div>
+      <div v-for="prop in space.attr"> 
+      <setting 
+        v-if="(space.attr.find(e => (e.name === 'gradient space')) && prop.name != space.attr.find(e => (e.name === 'gradient space'))['value']) || !space.attr.find(e => (e.name === 'gradient space'))"
+        v-bind:label="prop.name" 
+        multifield="prop.type === 'colorlist'" 
+        v-bind:value="typeof(prop.value) != 'array' && typeof(prop.value) != 'object' ? prop.value : null"
+      >
+        <input v-if="prop.type === 'range'" type="range" v-bind:min="prop.min" v-bind:max="prop.max" v-model="prop.value" v-bind:step="prop.step" />
+        <input v-if="prop.type === 'color'" type="color" v-model="prop.value" />
+        
+        <div v-if="prop.type === 'list'" class="select-wrap">
+          <select v-model="prop.value">
+            <option v-for="val in prop.values" v-bind:value="val">{{val}}</option>
+          <select />
+        </div>
+          
+        <colorlistinput v-if="prop.type === 'colorlist'" v-bind:colors="prop.value" v-on:change="(colors) => { prop.value = [...colors] }" />
+          
+        
+          
+      </setting>
+    </div>
+    </div>
+  </div>
+    
+  <colorwheel v-on:setcolor="setColorByIndex" v-bind:colors="currentColors" v-bind:names="colorNames"></colorwheel>
+  <colorgradient v-bind:colors="currentColors" v-bind:names="colorNames"></colorgradient>
+  <colorball v-bind:colors="currentColors" v-bind:names="colorNames"></colorball>
+  <colorlist v-bind:colors="currentColors" v-bind:names="colorNames"></colorlist>
+  <cube v-bind:bgcolorcontrast="bgcolorcontrast" v-bind:colors="currentColors" v-bind:names="colorNames"></cube>
+  <!--colorabstract v-bind:bgcolorcontrast="bgcolorcontrast" v-bind:colors="currentColors" v-bind:names="colorNames"></colorabstract-->
+  <colorwatches v-on:setcolor="setColorByIndex" v-bind:colors="currentColors" v-bind:names="colorNames"></colorwatches>
+  <colorpie v-bind:colors="currentColors" v-bind:names="colorNames"></colorpie>
+  <fattext v-bind:colors="currentColors" v-bind:names="colorNames"></fattext>
+  <colorrows v-bind:colors="currentColors" v-bind:names="colorNames"></colorrows>
+  <itten v-bind:colors="currentColors" v-bind:names="colorNames"></itten>
+  
+    
+  <colortext v-bind:colors="currentColors" v-bind:bgcolorcontrast="bgcolorcontrast" v-bind:bgcolor="bgcolor">
+    <article>
+      <p>WCAG 2 level AA requires a contrast ratio of at least 4.5:1 for normal text and 3:1 for large text, and a contrast ratio of at least 3:1 for graphics and user interface components (such as form input borders). Level AAA requires a contrast ratio of at least 7:1 for normal text and 4.5:1 for large text.
+Large text is defined either as bold and at least 14 point (typically 18.66px) or regular and at least 18 point (typically 24px).</p>
+
+<p>Large text is defined as 14 point (typically 18.66px) and bold or larger, or 18 point (typically 24px) or larger.</p>
+    </article>
+    <article>
+      <h2>Brewer</h2>
+      <p>Color schemes based on the research of <a href="https://twitter.com/ColorBrewer">Dr. Cynthia Brewer</a>, are excellent for qualitative, sequential, diverging <strong>data and map visualisation</strong>. <a href="http://www.personal.psu.edu/cab38/ColorBrewer/ColorBrewer_updates.html">Read more</a></p> 
+    </article>
+    <article>
+      <h2>Interpolate</h2>
+      <p>Gradually mixing one color with another to create pleasing gradients. Changing the color space changes the way those colors are mixed together and will greatly affect the result.</p>
+    </article>
+
+    <article>
+      <h2>CIE L*a*b*</h2>
+      <p>CIELAB was designed to be perceptually uniform with respect to human color vision, meaning that the same amount of numerical change in these values corresponds to about the same amount of visually perceived change. This is especially visible when the gradient space is set to lightness. <a href="https://en.wikipedia.org/wiki/CIELAB_color_space">Read more</a></p> 
+    </article>
+
+    <article>
+      <h2>RGB</h2>
+      <p>Is a mix of red green and blue as natively produced by the screen you are reading this on. By choosing the gradient space ‘red’, the color red will gradually be mixed to the amount of ‘blue’ and ‘green’ that you have chosen on the corresponding sliders.</p>
+    </article>
+
+    <article>
+      <h2>Cubehelix</h2>
+      <p>Those colors are generated by a helix (spiral) traversing the RGB color space. Looking at the 3-D view should explain this visually pretty nicely. Cubehelix was designed to provide a color mapping that would degrade gracefully to grayscale without losing information. Also meaning that there is a clear hierarchy in lightness.
+        <a href="https://www.mrao.cam.ac.uk/~dag/CUBEHELIX/">Read more</a></p>
+    </article>
+
+    <article>
+      <h2>HSL</h2>
+      <p>HSL stands for Hue Saturation and light. The palette is generated by rotating on the hue parameter.</p>
+    </article>
+
+    <article>
+      <h2>HULuv &amp; HPLuv</h2>
+      <p>The input in <strong>HULuv</strong> and <strong>HPLuv</strong> is the same as in HSL. The generated colors are corrected for perceptual uniformity using the findings from CIE. On top of that HPLuv aims to correct the chroma, meaning that not all the colors from the RGB space can be represented. <a href="http://www.hsluv.org/comparison/">Read more</a></p>
+    </article>
+  </colortext>
+    
+    
+    
+  <aside class="footer">
+    <h1 class="footer__title">color.pizza<sub>{{version}}</sub></h1>
+    <div class="footer__list">
+      <aside class="footer__section">
+        <h2>Color Temple</h2>
+        <p>Over the years I have coded multiple tools to help me understand and play with ideas sourrounding color. In an effort to make my findings accessible to a broader audience and to simply have fun, I designed and developed this tool. — <a href="https://twitter.com/meodai">David</a></p>
+      </aside>
+      
+      <aside class="footer__section">
+        <h2>Technology</h2>
+        <ul>
+          <li><a href="https://vuejs.org/">vue.js</a> general application</li>
+          <li><a href="https://github.com/gka/chroma.js">chroma.js</a> color math heavy lifting</li>
+          <li><a href="http://www.hsluv.org/">HSL<sub>uv</sub></a> HSL but with corrected chroma and luminosity</li>
+          <li><a href="https://github.com/meodai/color-names">color-names</a> API providing the 17530 color-names used</li>
+          <li><a href="https://threejs.org/">three.js</a> used for the 3d color space</li>
+          <li><a href="https://rsms.me/inter/">Inter typeface family</a> perfectly hinted font</li>
+        </ul>
+      </aside>
+      
+      <aside class="footer__section">
+        <h2>Thanks</h2>
+        <ul>
+          <li><a href="http://www.florianschulz.info/portfolio/">Florian Schulz</a> for letting me bounce my ideas and endless discussions about design systems</li>
+          <li><a href="http://www.daviddarx.com/">David Darx</a> for the visual direction and being an awesome person</li>
+          <li><a href="http://z43.network/">z43.network</a> and all the designers, illustrators and pixelartists involved in my hallway tests: <a href="https://twitter.com/rilemtwit">Richard Lems</a>, <a href="https://twitter.com/ENDESGA">ENDESGA</a></li>
+        </ul>
+      </aside>
+    </div>
+    <strong class="footer__subline">brought to you by <a href="http://elastiq.ch/"><ellogo v-bind:colors="currentColors" /></a></strong>
+    <exportjson v-bind:names="colorNames"></exportjson>
+  </aside>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.7/vue.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.3/chroma.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/102565/hsluv.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vuex/3.1.0/vuex.min.js'></script>
+<script src='https://unpkg.com/vue-multiselect@2.1.0'></script><script type="module" src="./script.js"></script>
+
+</body>
+</html>
